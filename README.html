@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chúc Em Ly</title>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: radial-gradient(circle at top, #3a0a4a, #0b0012 75%);
+}
+
+/* ===== PHONG THƯ ===== */
+#envelope-wrapper {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, #2a002f, #000);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+#envelope {
+  width: 220px;
+  height: 140px;
+  perspective: 900px;
+  position: relative;
+}
+
+.envelope-flap {
+  width: 100%;
+  height: 70px;
+  background: linear-gradient(180deg, #ffd6ef, #ff9fd7);
+  border-radius: 0 0 24px 24px;
+  transform-origin: top;
+  transition: transform 1s ease;
+  box-shadow: 0 8px 30px #ff6fb080;
+}
+
+.envelope-body {
+  position: absolute;
+  top: 36px;
+  width: 100%;
+  height: 104px;
+  background: #fff;
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 14px 40px #ff6fb060;
+}
+
+.envelope-letter {
+  position: absolute;
+  inset: 46px 24px;
+  background: #fff1f9;
+  border-radius: 12px;
+  font-size: 3em;
+  text-align: center;
+  line-height: 52px;
+  box-shadow: 0 0 30px #ff9fd7;
+}
+
+#open-btn {
+  margin-top: 42px;
+  padding: 14px 46px;
+  font-size: 1.35em;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-weight: 800;
+  color: #7b003f;
+  background: linear-gradient(90deg, #ff9fd7, #fff);
+  box-shadow: 0 0 35px #ff9fd7;
+}
+
+/* ===== NỀN SAO ===== */
+#bg {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: none;
+}
+
+/* ===== CHỮ TRUNG TÂM ===== */
+#center-text {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3.6em;
+  font-weight: 900;
+  color: #fff0fa;
+  text-align: center;
+  z-index: 10;
+  opacity: 0;
+  text-shadow:
+    0 0 12px #ff7acb,
+    0 0 30px #ff3fa7,
+    0 0 60px #ff0f8c;
+  animation: fadeScale 2.5s ease forwards;
+}
+
+@keyframes fadeScale {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ===== CHỮ BAY ===== */
+#container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  display: none;
+}
+
+.message {
+  position: absolute;
+  font-size: 2em;
+  font-weight: 800;
+  color: #ffd9f1;
+  text-shadow:
+    0 0 10px #ff8acb,
+    0 0 25px #ff5fb8,
+    0 0 45px #ff2fa0;
+
+  animation: floatUp linear forwards;
+  animation-duration: var(--duration);
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 0;
+    transform: translate(var(--start-x), 110vh) scale(0.8);
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--end-x), -30vh) scale(1.4);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="envelope-wrapper">
+  <div id="envelope">
+    <div class="envelope-flap"></div>
+    <div class="envelope-body"></div>
+    <div class="envelope-letter">💌</div>
+  </div>
+  <button id="open-btn">Mở thư 💖</button>
+</div>
+
+<canvas id="bg"></canvas>
+
+<div id="center-text">Chúc em Valentine hạnh phúc Ly 💖</div>
+<div id="container"></div>
+
+<script>
+/* ===== CLICK MỞ THƯ ===== */
+document.getElementById("open-btn").onclick = () => {
+  document.querySelector(".envelope-flap").style.transform = "rotateX(-130deg)";
+  setTimeout(() => {
+    document.getElementById("envelope-wrapper").style.display = "none";
+    document.getElementById("bg").style.display = "block";
+    document.getElementById("container").style.display = "block";
+    document.getElementById("center-text").style.opacity = 1;
+    startMessages();
+    drawStars();
+  }, 900);
+};
+
+/* ===== LỜI CHÚC ===== */
+const messages = [
+  "Ly luôn xinh đẹp ✨",
+  "Mong em luôn cười 😊",
+  "Yêu em rất nhiều 💕",
+  "Happy Valentine 💖",
+  "Luôn bên em ❤️"
+];
+
+/* ===== CHỮ BAY FULL MÀN ===== */
+function startMessages() {
+  setInterval(() => {
+    const msg = document.createElement("div");
+    msg.className = "message";
+    msg.innerText = messages[Math.floor(Math.random() * messages.length)];
+
+    const startX = Math.random() * window.innerWidth;
+    const endX = Math.random() * window.innerWidth;
+    const duration = Math.random() * 4 + 14; // 14–18s
+
+    msg.style.setProperty("--start-x", startX + "px");
+    msg.style.setProperty("--end-x", endX + "px");
+    msg.style.setProperty("--duration", duration + "s");
+
+    document.getElementById("container").appendChild(msg);
+    setTimeout(() => msg.remove(), duration * 1000);
+  }, 1200);
+}
+
+/* ===== SAO ===== */
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
+window.onresize = resize;
+resize();
+
+const stars = Array.from({ length: 200 }, () => ({
+  x: Math.random() * canvas.width,
+  y: Math.random() * canvas.height,
+  r: Math.random() * 1.6 + 0.5,
+  s: Math.random() * 0.4 + 0.15
+}));
+
+function drawStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (const s of stars) {
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = "#fff";
+    ctx.shadowBlur = 18;
+    ctx.shadowColor = "#fff";
+    ctx.fill();
+    s.y += s.s;
+    if (s.y > canvas.height) s.y = 0;
+  }
+  requestAnimationFrame(drawStars);
+}
+</script>
+
+</body>
+</html>
+
